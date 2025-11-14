@@ -1,6 +1,7 @@
 import rclpy                    # import the ROS Client Library for Python (RCLPY)
 from rclpy.node import Node     # from RCLPY, import the Node Class used to create ROS 2 nodes
 from std_msgs.msg import Int32 # from standard messages, import the int32 message
+from std_msgs.msg import Bool
 
 import os
 include_dir = os.path.dirname(os.path.realpath(__file__)) + "/../../../../../../src/include/"
@@ -12,28 +13,36 @@ class MinimalPublisher(Node):   # Create a new class called MinimalPublisher tha
 
     def __init__(self):
         super().__init__('minimal_publisher')                               # Initialize the Node with the name 'minimal_publisher'
-        self.publisher_ = self.create_publisher(Int32, 'main_sensor_topic', 10)  # Create a publisher for int type messages on the topic mainsensortopic
-        self.declare_parameter('msg_frequency', 10)                        # Instantiate parameter, set default value to 'Hi'
+        self.publisher_ = self.create_publisher(Bool, 'isLight', 10)  # Create a publisher for bool type messages on the topic mainsensortopic
+        self.declare_parameter('msg_frequency', 10)                        # Instantiate parameter, set default value to frequency 10
+        self.declare_parameter('ir_pin_#', IR1_INPUT_PIN)            # Instantiate parameter, set default value to pin 1
         timer_period = 0.5                                                  # Define the timer period in seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)   # Create a timer that calls 'timer_callback' every 0.5 seconds
 
     def timer_callback(self):
         my_param = self.get_parameter('msg_frequency').get_parameter_value().integer_value
-        msg = Int32()                                        # Create a new Int32 message
-        msg.data = my_param                                # set msg.data to have the value of my_param as an int
+  
+
+        my_param2 = self.get_parameter('ir_pin_#').get_parameter_value().integer_value
+
+        msg = Bool()
 
         self.get_logger().info("Reading IR1")
-        ir1Value = get_ir_state(IR1_INPUT_PIN)
+        ir1Value = get_ir_state(my_param2)
         if(ir1Value == DARK):
             self.get_logger().info("IR1 is Dark")
+            msg.data = False
+            self.publisher_.publish(msg)    
         elif(ir1Value == LIGHT):
             self.get_logger().info("IR1 is LIGHT")
+            msg.data = True
+            self.publisher_.publish(msg)    
         elif(ir1Value == INVALID):
-            self.get_logger().info("INVALID pin")
+            self.get_logger().info("Invalid!")
         time.sleep(2)
 
-        self.publisher_.publish(msg)                            # Publish the message to the topic
-        self.get_logger().info('Publishing: "%s"' % msg.data)   # Log the published message for debugging
+                                # Publish the message to the topic
+        #self.get_logger().info('Publishing: "%s"' % msg.data)   # Log the published message for debugging
 
 
 def main(args=None):
