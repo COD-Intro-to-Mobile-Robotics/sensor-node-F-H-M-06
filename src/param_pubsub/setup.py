@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
                 'talker = param_pubsub.param_publisher:main',
                 'listener = param_pubsub.param_subscriber:main',
+                'faraazPublisher = param_pubsub.faraaz_publisher:main'
 
         ],
 },
