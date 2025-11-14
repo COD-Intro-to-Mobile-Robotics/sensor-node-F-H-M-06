@@ -6,7 +6,7 @@ import os
 include_dir = os.path.dirname(os.path.realpath(__file__)) + "/../../../../../../src/include/"
 import sys
 sys.path.append(include_dir)
-from hat_library import *
+from hat_library import *  #Import hatlibrary
 
 class MinimalPublisher(Node):   # Create a new class called MinimalPublisher that inherits variables & functions from Node
 
@@ -21,6 +21,17 @@ class MinimalPublisher(Node):   # Create a new class called MinimalPublisher tha
         my_param = self.get_parameter('msg_frequency').get_parameter_value().integer_value
         msg = Int32()                                        # Create a new Int32 message
         msg.data = my_param                                # set msg.data to have the value of my_param as an int
+
+        self.get_logger().info("Reading IR1")
+        ir1Value = get_ir_state(IR1_INPUT_PIN)
+        if(ir1Value == DARK):
+            self.get_logger().info("IR1 is Dark")
+        elif(ir1Value == LIGHT):
+            self.get_logger().info("IR1 is LIGHT")
+        elif(ir1Value == INVALID):
+            self.get_logger().info("INVALID pin")
+        time.sleep(2)
+
         self.publisher_.publish(msg)                            # Publish the message to the topic
         self.get_logger().info('Publishing: "%s"' % msg.data)   # Log the published message for debugging
 
