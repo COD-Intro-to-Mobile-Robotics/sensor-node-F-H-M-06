@@ -25,7 +25,11 @@ class MinimalPublisher(Node):   # Create a new class called MinimalPublisher tha
 
         my_param2 = self.get_parameter('ir_pin_#').get_parameter_value().integer_value
 
+        frequency = my_param
+
+
         msg = Bool()
+
 
         self.get_logger().info("Reading IR1")
         ir1Value = get_ir_state(my_param2)
@@ -39,10 +43,8 @@ class MinimalPublisher(Node):   # Create a new class called MinimalPublisher tha
             self.publisher_.publish(msg)    
         elif(ir1Value == INVALID):
             self.get_logger().info("Invalid!")
-        time.sleep(2)
+        time.sleep(frequency)
 
-                                # Publish the message to the topic
-        #self.get_logger().info('Publishing: "%s"' % msg.data)   # Log the published message for debugging
 
 
 def main(args=None):
