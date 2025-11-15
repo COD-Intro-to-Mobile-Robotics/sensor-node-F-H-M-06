@@ -26,7 +26,7 @@ class MinimalPublisher(Node):   # Create a new class called MinimalPublisher tha
        
         if my_param2 == 1:
             pinNum = IR1_INPUT_PIN
-        else:
+        elif my_param2 == 2:
             pinNum = IR2_INPUT_PIN
 
         self.get_logger().info("Reading Sensor")
