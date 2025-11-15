@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <node pkg="param_pubsub" exec="faraazPublisher" name="publisherWithFrequencyTen">
+    <param name="msg_frequency" value="10" />
+    <param name="sensor_#" value="1" />
+    <remap from="/isLight" to="/isLight1" />
+  </node>
+</launch>

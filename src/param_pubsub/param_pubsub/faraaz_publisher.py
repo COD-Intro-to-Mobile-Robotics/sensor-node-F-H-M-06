@@ -13,37 +13,35 @@ class MinimalPublisher(Node):   # Create a new class called MinimalPublisher tha
 
     def __init__(self):
         super().__init__('minimal_publisher')                               # Initialize the Node with the name 'minimal_publisher'
-        self.publisher_ = self.create_publisher(Bool, 'isLight', 10)  # Create a publisher for bool type messages on the topic mainsensortopic
+        self.publisher_ = self.create_publisher(Bool, 'isLight', 10)  # Create a publisher for bool type messages on the topic isLight
         self.declare_parameter('msg_frequency', 10)                        # Instantiate parameter, set default value to frequency 10
-        self.declare_parameter('ir_pin_#', IR1_INPUT_PIN)            # Instantiate parameter, set default value to pin 1
-        timer_period = 0.5                                                  # Define the timer period in seconds
+        self.declare_parameter('sensor_#', 1)            # Instantiate parameter, set default value to pin 1
+        timer_period = 1.0/self.get_parameter('msg_frequency').get_parameter_value().integer_value  # Define the timer period in seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)   # Create a timer that calls 'timer_callback' every 0.5 seconds
 
     def timer_callback(self):
-        my_param = self.get_parameter('msg_frequency').get_parameter_value().integer_value
-  
-
-        my_param2 = self.get_parameter('ir_pin_#').get_parameter_value().integer_value
-
-        frequency = my_param
-
-
+        
+        my_param2 = self.get_parameter('sensor_#').get_parameter_value().integer_value
         msg = Bool()
+       
+        if my_param2 == 1:
+            pinNum = IR1_INPUT_PIN
+        else:
+            pinNum = IR2_INPUT_PIN
 
-
-        self.get_logger().info("Reading IR1")
-        ir1Value = get_ir_state(my_param2)
-        if(ir1Value == DARK):
-            self.get_logger().info("IR1 is Dark")
+        self.get_logger().info("Reading Sensor")
+        irValue = get_ir_state(pinNum)
+        if(irValue == DARK):
+            self.get_logger().info("Sensor is Dark")
             msg.data = False
             self.publisher_.publish(msg)    
-        elif(ir1Value == LIGHT):
-            self.get_logger().info("IR1 is LIGHT")
+        elif(irValue == LIGHT):
+            self.get_logger().info("Sensor is LIGHT")
             msg.data = True
             self.publisher_.publish(msg)    
-        elif(ir1Value == INVALID):
+        else:
             self.get_logger().info("Invalid!")
-        time.sleep(frequency)
+        
 
 
 
